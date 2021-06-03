@@ -1,6 +1,11 @@
 package one.digitalInnovation.personaapi.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
+import one.digitalInnovation.personaapi.dto.response.MessageResponseDTO;
+import one.digitalInnovation.personaapi.entity.Person;
+import one.digitalInnovation.personaapi.repository.PersonRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -8,8 +13,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/people")
 public class PersonController {
 
-    @GetMapping
-    public String getBook(){
-        return "API Test!";
+    private PersonRepository personRepository;
+
+    @Autowired
+    public PersonController(PersonRepository personRepository) {
+        this.personRepository = personRepository;
+    }
+
+    @PostMapping
+    public MessageResponseDTO createPerson(@RequestBody Person person){
+        Person savedPerson = personRepository.save(person);
+        return MessageResponseDTO
+                .builder()
+                .message("Created person with ID " + savedPerson.getId())
+                .build();
     }
 }
